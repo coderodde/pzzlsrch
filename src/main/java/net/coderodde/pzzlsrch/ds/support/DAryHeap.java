@@ -76,6 +76,17 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
     }
     
     public void add(T element, int priority) {
+        if (map.containsKey(element)) {
+            return;
+        }
+        
+        Node<T> node = new Node<T>();
+        node.element = element;
+        node.priority = priority;
+        node.index = size;
+        storage[size] = node;
+        map.put(element, node);
+        siftUp(size++);
     }
 
     public T min() {
@@ -87,25 +98,54 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         checkNotEmpty();
         T ret = ((Node<T>) storage[0]).element;
         map.remove(ret);
-        Node<T> node = (Node<T>) storage[map.size()];
-        storage[map.size()] = null; // For garbage collecting.
-        storage[0] = node;
-        siftDown(0);
+        Node<T> node = (Node<T>) storage[--size];
+        storage[size] = null; // For garbage collecting.
+        
+        if (size != 0) {
+            storage[0] = node;
+            node.index = 0;
+            siftDown(0);
+        }
+        
         return ret;
     }
 
     public void decreasePriority(T element, int priority) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node<T> node = map.get(element);
+        
+        if (node == null 
+                || node.index == 0
+                || node.priority <= priority) {
+            return;
+        }
+        
+        node.priority = priority;
+        siftUp(node.index);
     }
 
+    /**
+     * Returns the amount of elements in this heap.
+     * 
+     * @return the amount of elements in this heap.
+     */
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return size;
+    }
+    
+    public void clear() {
+        map.clear();
+        
+        for (int i = 0; i != size; ++i) {
+            storage[i] = null;
+        }
+        
+        size = 0;
     }
     
     private final void checkAndExpand() {
-        if (map.size() == storage.length) {
-            Object[] arr = new Object[3 * storage.length / 2];
-            System.arraycopy(storage, 0, arr, 0, storage.length);
+        if (size == storage.length) {
+            Object[] arr = new Object[3 * size / 2];
+            System.arraycopy(storage, 0, arr, 0, size);
             storage = arr;
         }
     }
@@ -125,20 +165,103 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
     }
     
     private final void checkNotEmpty() {
-        if (map.size() == 0) {
+        if (size == 0) {
             throw new NoSuchElementException("Reading from an empty heap.");
         }
     }
     
-    private void computeChildrenIndices(final int parentIndex) {
+    private void computeChildrenIndices(final int index) {
         for (int i = 0; i != d; ++i) {
-            indices[i] = d * i + 1;
+            indices[i] = d * index + i + 1;
             
-            if (indices[i] >= map.)
+            if (indices[i] >= size) {
+                indices[i] = -1;
+                break;
+            }
         }
     }
     
-    private boolean siftDown(final int index) {
-        return false;
+    private int getParentIndex(final int index) {
+        return (index - 1) / d;
+    }
+    
+    private void siftUp(int index) {
+        if (index == 0) {
+            return;
+        }
+        
+        int parentIndex = getParentIndex(index);
+        
+        for (;;) {
+            Node<T> current = (Node<T>) storage[index];
+            Node<T> parent = (Node<T>) storage[parentIndex];
+            
+            if (parent.priority > current.priority) {
+                storage[index] = parent;
+                storage[parentIndex] = current;
+                
+                ((Node<T>) storage[index]).index = index;
+                ((Node<T>) storage[parentIndex]).index = parentIndex;
+                
+                index = parentIndex;
+                parentIndex = getParentIndex(index);
+            } else {
+                return;
+            }
+            
+            if (index == 0) {
+                return;
+            }
+        }
+    }
+    
+    private void siftDown(int index) {
+        final int priority = ((Node<T>) storage[index]).priority;
+        
+        for (;;) {
+            int minChildPriority = priority;
+            int minChildIndex = -1;
+            computeChildrenIndices(index);
+
+            for (int i : indices) {
+                if (i == -1) {
+                    break;
+                }
+
+                int tentative = ((Node<T>) storage[i]).priority;
+
+                if (minChildPriority > tentative) {
+                    minChildPriority = tentative;
+                    minChildIndex = i;
+                }
+            }
+
+            if (minChildIndex == -1) {
+                return;
+            }
+            
+            // Swap nodes at positions 'index' and 'minChildIndex'.
+            Node<T> tmp = (Node<T>) storage[index];
+            storage[index] = storage[minChildIndex];
+            storage[minChildIndex] = tmp;
+            
+            // Update the indices.
+            ((Node<T>) storage[index]).index = index;
+            ((Node<T>) storage[minChildIndex]).index = minChildIndex;
+            
+            // Go for the next iteration.
+            index = minChildIndex;
+        }
+    }
+    
+    static void printarr(int... a) {
+        for (int i : a) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+    }
+    
+    public static void main(String... args) {
+        System.out.println((-1) / 3);
     }
 }

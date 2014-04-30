@@ -42,4 +42,6 @@ public interface IntegerPriorityQueue<T> {
      * @return the amount of elements in the queue.
      */
     public int size();
+    
+    public void clear();
 }
