@@ -80,6 +80,7 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
             return;
         }
         
+        checkAndExpand();
         Node<T> node = new Node<T>();
         node.element = element;
         node.priority = priority;
@@ -140,6 +141,15 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         }
         
         size = 0;
+    }
+    
+    public int getDegree() {
+        return d;
+    }
+    
+    public int getMinimumPriority() {
+        checkNotEmpty();
+        return ((Node<T>) storage[0]).priority;
     }
     
     private final void checkAndExpand() {

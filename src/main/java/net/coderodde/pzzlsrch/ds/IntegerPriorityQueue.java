@@ -44,4 +44,6 @@ public interface IntegerPriorityQueue<T> {
     public int size();
     
     public void clear();
+    
+    public int getMinimumPriority();
 }
