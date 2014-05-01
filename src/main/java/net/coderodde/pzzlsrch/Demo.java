@@ -30,7 +30,7 @@ public class Demo {
         title1("Profiling puzzle solvers");
         final long SEED = 1398780721825L; //System.currentTimeMillis();
         final Random r = new Random(SEED);
-        final int STEPS = 70; //r.nextInt(50) + 1;
+        final int STEPS = 90; //r.nextInt(50) + 1;
         final PuzzleNode source = Utils.getRandomPuzzleNode(STEPS, 4, r);
         System.out.println("Seed: " + SEED);
         
