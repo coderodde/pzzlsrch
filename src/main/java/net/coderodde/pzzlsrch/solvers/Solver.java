@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import net.coderodde.pzzlsrch.ds.IntegerPriorityQueue;
 
 /**
  * This abstract class defines the API for solvers and some methods shared by
@@ -15,8 +16,19 @@ import java.util.Map;
  */
 public abstract class Solver<T extends Iterable<T>> {
     
-    public abstract 
-        Solver<T> setHeuristicFunction(final HeuristicFunction<T> h);
+    public Solver<T> withHeuristicFunction(final HeuristicFunction<T> h) {
+        // Do nothing by default.
+        return this;
+    }
+    
+    public Solver<T> withPriorityQueue(final IntegerPriorityQueue<T> queue) {
+        // Do nothing by default.
+        return this;
+    }
+    
+    public HeuristicFunction<T> getHeuristicFunction() {
+        return null;
+    }
     
     public abstract List<T> search(final T source, final T target);
     

@@ -115,6 +115,10 @@ public class PuzzleNode implements Iterable<PuzzleNode> {
         return hash;
     }
     
+    public byte get(final int x, final int y) {
+        return m[y][x];
+    }
+    
     public PuzzleNode moveUp() {
         if (y == 0) {
             return null;

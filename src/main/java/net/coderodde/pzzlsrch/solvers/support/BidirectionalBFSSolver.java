@@ -30,12 +30,6 @@ public class BidirectionalBFSSolver<T extends Iterable<T>> extends Solver<T> {
     private Map<T, T> parentMapB = new HashMap<T, T>();
     
     @Override
-    public Solver<T> setHeuristicFunction(final HeuristicFunction<T> h) {
-        // Just ignore.
-        return this;
-    }
-
-    @Override
     public List<T> search(final T source, final T target) {
         checkNotNull(source, "Source is null.");
         checkNotNull(target, "Target is null.");

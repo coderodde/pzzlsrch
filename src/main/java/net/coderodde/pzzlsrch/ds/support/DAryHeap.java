@@ -220,6 +220,11 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         return ((Node<T>) storage[0]).priority;
     }
     
+    @Override
+    public final DAryHeap<T> newInstance() {
+        return new DAryHeap<T>(getDegree(), storage.length);
+    }
+    
     /**
      * This method expands the storage array in case it is full.
      */

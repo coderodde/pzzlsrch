@@ -39,6 +39,14 @@ public class Utils {
         }
     }
     
+    public static final void checkDimensions
+        (final PuzzleNode pn1, final PuzzleNode pn2) {
+        if (pn1.getDimension() != pn2.getDimension()) {
+            throw new IllegalArgumentException(
+                    "Nodes' dimensions do not match.");
+        }
+    }
+    
     private static final PuzzleNode 
         nextNotNull(final PuzzleNode source, final Random r) {
         PuzzleNode next = null;

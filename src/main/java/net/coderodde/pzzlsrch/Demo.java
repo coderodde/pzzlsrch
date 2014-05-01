@@ -7,24 +7,29 @@ import static net.coderodde.pzzlsrch.Utils.title1;
 import static net.coderodde.pzzlsrch.Utils.title2;
 import net.coderodde.pzzlsrch.ds.IntegerPriorityQueue;
 import net.coderodde.pzzlsrch.ds.support.DAryHeap;
-import net.coderodde.pzzlsrch.ds.support.DAryHeap;
 import net.coderodde.pzzlsrch.model.PuzzleNode;
+import net.coderodde.pzzlsrch.solvers.HeuristicFunction;
 import net.coderodde.pzzlsrch.solvers.Solver;
 import net.coderodde.pzzlsrch.solvers.support.BFSSolver;
 import net.coderodde.pzzlsrch.solvers.support.BidirectionalBFSSolver;
+import net.coderodde.pzzlsrch.solvers.support.BidirectionalHeuristicBFSSolver;
+import net.coderodde.pzzlsrch.solvers.support.DisplacementHeuristicFunction;
+import net.coderodde.pzzlsrch.solvers.support.HeuristicBFSSolver;
+import net.coderodde.pzzlsrch.solvers.support.ManhattanHeuristicFunction;
+import net.coderodde.pzzlsrch.solvers.support.ManhattanHeuristicFunction2;
 
 public class Demo {
     
     public static final void main(final String... args) {
-        profilePriorityQueues();
-//        profileSolvers();
+//        profilePriorityQueues();
+        profileSolvers();
     }
     
     private static final void profileSolvers() {
         title1("Profiling puzzle solvers");
         final long SEED = 1398780721825L; //System.currentTimeMillis();
         final Random r = new Random(SEED);
-        final int STEPS = 30; //r.nextInt(50) + 1;
+        final int STEPS = 70; //r.nextInt(50) + 1;
         final PuzzleNode source = Utils.getRandomPuzzleNode(STEPS, 4, r);
         System.out.println("Seed: " + SEED);
         
@@ -32,12 +37,70 @@ public class Demo {
         
         Solver<PuzzleNode> solver = new BFSSolver<PuzzleNode>();
         
-        pathList.add(profile(source, solver));
+//        pathList.add(profile(source, solver));
         
         solver = new BidirectionalBFSSolver<PuzzleNode>();
         
         pathList.add(profile(source, solver));
+        
+        HeuristicFunction<PuzzleNode> hf = 
+                new DisplacementHeuristicFunction();
+        
+        solver = new HeuristicBFSSolver<PuzzleNode>()
+                .withHeuristicFunction(hf)
+                .withPriorityQueue(new DAryHeap(6));
+        
+        pathList.add(profileHeuristic(source, solver));
+        
+        hf = new ManhattanHeuristicFunction();
+        
+        solver = new HeuristicBFSSolver<PuzzleNode>()
+                .withHeuristicFunction(hf)
+                .withPriorityQueue(new DAryHeap(6));
+        
+        pathList.add(profileHeuristic(source, solver));
+        
+        hf = new ManhattanHeuristicFunction2(16);
+        
+        solver = new HeuristicBFSSolver<PuzzleNode>()
+                .withHeuristicFunction(hf)
+                .withPriorityQueue(new DAryHeap(6));
+        
+        pathList.add(profileHeuristic(source, solver));
+        
+        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
+                .withHeuristicFunction(new DisplacementHeuristicFunction());
+        
+        pathList.add(profileHeuristic(source, solver));
+        
+        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
+                .withHeuristicFunction(new ManhattanHeuristicFunction());
+        
+        pathList.add(profileHeuristic(source, solver));
+                
+        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
+                .withHeuristicFunction(new ManhattanHeuristicFunction2(16));
+        
+        pathList.add(profileHeuristic(source, solver));
     }
+    
+    private static final List<PuzzleNode> profileHeuristic
+        (final PuzzleNode source, final Solver<PuzzleNode> solver) {
+        title2(solver.getClass().getSimpleName() + ", " + 
+               solver.getHeuristicFunction().getClass().getSimpleName());
+
+        long ta = System.currentTimeMillis();
+
+        List<PuzzleNode> path = 
+                solver.search(source, new PuzzleNode(source.getDimension()));
+
+        long tb = System.currentTimeMillis();
+
+        System.out.println("Time: " + (tb - ta) + " ms.");
+        System.out.println("Solution length: " + (path.size() - 1) + " edges.");
+
+        return path;
+        }
     
     private static final List<PuzzleNode> 
         profile(final PuzzleNode source, final Solver<PuzzleNode> solver) {
