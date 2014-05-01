@@ -7,6 +7,7 @@ import static net.coderodde.pzzlsrch.Utils.title1;
 import static net.coderodde.pzzlsrch.Utils.title2;
 import net.coderodde.pzzlsrch.ds.IntegerPriorityQueue;
 import net.coderodde.pzzlsrch.ds.support.DAryHeap;
+import net.coderodde.pzzlsrch.ds.support.DAryHeap;
 import net.coderodde.pzzlsrch.model.PuzzleNode;
 import net.coderodde.pzzlsrch.solvers.Solver;
 import net.coderodde.pzzlsrch.solvers.support.BFSSolver;
@@ -16,7 +17,7 @@ public class Demo {
     
     public static final void main(final String... args) {
         profilePriorityQueues();
-        profileSolvers();
+//        profileSolvers();
     }
     
     private static final void profileSolvers() {
@@ -60,12 +61,11 @@ public class Demo {
         final long SEED = System.currentTimeMillis();
         
         List<int[]> results = new ArrayList<int[]>();
-        results.add(profile(new DAryHeap(2), new Random(SEED)));
-        results.add(profile(new DAryHeap(3), new Random(SEED)));
-        results.add(profile(new DAryHeap(4), new Random(SEED)));
-        results.add(profile(new DAryHeap(5), new Random(SEED)));
-        results.add(profile(new DAryHeap(6), new Random(SEED)));
-        
+        results.add(profile(new DAryHeap<Integer>(2), new Random(SEED)));
+        results.add(profile(new DAryHeap<Integer>(3), new Random(SEED)));
+        results.add(profile(new DAryHeap<Integer>(4), new Random(SEED)));
+        results.add(profile(new DAryHeap<Integer>(5), new Random(SEED)));
+        results.add(profile(new DAryHeap<Integer>(6), new Random(SEED)));
         System.out.println("Priority sequences match: " + resultsMatch(results));
     }
     

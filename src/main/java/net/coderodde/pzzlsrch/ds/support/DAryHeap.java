@@ -6,11 +6,18 @@ import java.util.NoSuchElementException;
 import net.coderodde.pzzlsrch.ds.IntegerPriorityQueue;
 
 /**
- *
- * @author rodionefremov
+ * This class implement a d-ary minimum heap.
+ * 
+ * @author Rodion Efremov
+ * @version 1.0
  */
 public class DAryHeap<T> implements IntegerPriorityQueue<T> {
 
+    /**
+     * A structure holding the elements and their metadata.
+     * 
+     * @param <T> the element type.
+     */
     private static class Node<T> {
         T element;
         int index;
@@ -58,6 +65,13 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
      */
     private int size;
     
+    /**
+     * Construct a new d-ary heap with given <code>d</code> and
+     * <code>capacity</code>.
+     * 
+     * @param d the degree (branching factor) of this heap.
+     * @param capacity the initial capacity.
+     */
     public DAryHeap(final int d, final int capacity) {
         checkD(d);
         checkCapacity(capacity);
@@ -67,14 +81,29 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         this.map = new HashMap<T, Node<T>>(capacity);
     }
     
+    /**
+     * Constructs a new d-ary heap with given degree and default capacity.
+     * 
+     * @param d the degree of newly constructed heap.
+     */
     public DAryHeap(final int d) {
         this(d, DEFAULT_CAPACITY);
     }
     
+    /**
+     * Constructs a heap with default parameters.
+     */
     public DAryHeap() {
         this(DEFAULT_DEGREE, DEFAULT_CAPACITY);
     }
     
+    /**
+     * Adds an element to this queue if it is not already there.
+     * 
+     * @param element the element to add.
+     * @param priority the priority of the element.
+     */
+    @Override
     public void add(T element, int priority) {
         if (map.containsKey(element)) {
             return;
@@ -90,11 +119,27 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         siftUp(size++);
     }
 
+    /**
+     * Returns but does not remove the root element.
+     * 
+     * @return the root element of this heap.
+     * 
+     * @throws NoSuchElementException if this heap is empty.
+     */
+    @Override
     public T min() {
         checkNotEmpty();
         return ((Node<T>) storage[0]).element;
     }
 
+    /**
+     * Returns and removes the root element.
+     * 
+     * @return the root element of this heap.
+     * 
+     * @throws NoSuchElementException if this heap is empty.
+     */
+    @Override
     public T extractMinimum() {
         checkNotEmpty();
         T ret = ((Node<T>) storage[0]).element;
@@ -111,6 +156,13 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         return ret;
     }
 
+    /**
+     * Updates the priority of an element.
+     * 
+     * @param element the element whose priority to decrease.
+     * @param priority the new priority.
+     */
+    @Override
     public void decreasePriority(T element, int priority) {
         Node<T> node = map.get(element);
         
@@ -129,10 +181,15 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
      * 
      * @return the amount of elements in this heap.
      */
+    @Override
     public int size() {
         return size;
     }
     
+    /**
+     * Removes all the elements from this heap.
+     */
+    @Override
     public void clear() {
         map.clear();
         
@@ -143,15 +200,29 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         size = 0;
     }
     
+    /**
+     * Returns the branching factor (degree) of this heap.
+     * 
+     * @return the degree of this heap.
+     */
     public int getDegree() {
         return d;
     }
     
+    /**
+     * Returns the minimum priority (the priority of the root element).
+     * 
+     * @return the minimum priority in this heap. 
+     */
+    @Override
     public int getMinimumPriority() {
         checkNotEmpty();
         return ((Node<T>) storage[0]).priority;
     }
     
+    /**
+     * This method expands the storage array in case it is full.
+     */
     private final void checkAndExpand() {
         if (size == storage.length) {
             Object[] arr = new Object[3 * size / 2];
@@ -160,12 +231,26 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         }
     }
     
+    /**
+     * Checks the sanity of degree <code>d</code>
+     * 
+     * @param d the degree to check.
+     * 
+     * @throws IllegalArgumentException if degree is invalid.
+     */
     private final void checkD(final int d) {
         if (d < 2) {
             throw new IllegalArgumentException("Degree is less than 2.");
         }
     }
     
+    /**
+     * Checks the sanity of capacity.
+     * 
+     * @param capacity capacity to check.
+     * 
+     * @throws IllegalArgumentException if capacity if invalid.
+     */
     private final void checkCapacity(final int capacity) {
         if (capacity < MINIMUM_CAPACITY) {
             throw new IllegalArgumentException(
@@ -174,6 +259,11 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         }
     }
     
+    /**
+     * Checks whether this heap is not empty.
+     * 
+     * @throws NoSuchElementException if this heap is empty.
+     */
     private final void checkNotEmpty() {
         if (size == 0) {
             throw new NoSuchElementException("Reading from an empty heap.");
@@ -201,35 +291,36 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         }
         
         int parentIndex = getParentIndex(index);
+        Node<T> target = (Node<T>) storage[index];
         
         for (;;) {
-            Node<T> current = (Node<T>) storage[index];
             Node<T> parent = (Node<T>) storage[parentIndex];
             
-            if (parent.priority > current.priority) {
+            if (parent.priority > target.priority) {
                 storage[index] = parent;
-                storage[parentIndex] = current;
-                
-                ((Node<T>) storage[index]).index = index;
-                ((Node<T>) storage[parentIndex]).index = parentIndex;
+                parent.index = index;
                 
                 index = parentIndex;
                 parentIndex = getParentIndex(index);
             } else {
-                return;
+                break;
             }
             
             if (index == 0) {
-                return;
+                break;
             }
         }
+        
+        storage[index] = target;
+        target.index = index;
     }
     
     private void siftDown(int index) {
-        final int priority = ((Node<T>) storage[index]).priority;
+        final Node<T> target = (Node<T>) storage[index];
+        final int PRIORITY = target.priority;
         
         for (;;) {
-            int minChildPriority = priority;
+            int minChildPriority = PRIORITY;
             int minChildIndex = -1;
             computeChildrenIndices(index);
 
@@ -247,17 +338,13 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
             }
 
             if (minChildIndex == -1) {
+                storage[index] = target;
+                target.index = index;
                 return;
             }
             
-            // Swap nodes at positions 'index' and 'minChildIndex'.
-            Node<T> tmp = (Node<T>) storage[index];
             storage[index] = storage[minChildIndex];
-            storage[minChildIndex] = tmp;
-            
-            // Update the indices.
             ((Node<T>) storage[index]).index = index;
-            ((Node<T>) storage[minChildIndex]).index = minChildIndex;
             
             // Go for the next iteration.
             index = minChildIndex;
