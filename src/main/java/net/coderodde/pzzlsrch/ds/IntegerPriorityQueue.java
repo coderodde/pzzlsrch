@@ -2,7 +2,9 @@ package net.coderodde.pzzlsrch.ds;
 
 /**
  *
- * @author rodionefremov
+ * @param <T> the element type.
+ * @author Rodion Efremov
+ * @version 1.0
  */
 public interface IntegerPriorityQueue<T> {
     
