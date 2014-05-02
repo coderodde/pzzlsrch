@@ -19,8 +19,20 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
      * @param <T> the element type.
      */
     private static class Node<T> {
+        /**
+         * The element.
+         */
         T element;
+        
+        /**
+         * The index at which this <code>node</code> resides in the storage
+         * array.
+         */
         int index;
+        
+        /**
+         * The priority of element.
+         */
         int priority;
     }
     
@@ -220,6 +232,11 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         return ((Node<T>) storage[0]).priority;
     }
     
+    /**
+     * Spawns a new empty heap with the same implementation.
+     * 
+     * @return a new empty heap.
+     */
     @Override
     public final DAryHeap<T> newInstance() {
         return new DAryHeap<T>(getDegree(), storage.length);
@@ -275,6 +292,12 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         }
     }
     
+    /**
+     * Computes the children indices of <code>index</code> and stores them in
+     * <code>indices</code>.
+     * 
+     * @param index the index whose children indices to compute.
+     */
     private void computeChildrenIndices(final int index) {
         for (int i = 0; i != d; ++i) {
             indices[i] = d * index + i + 1;
@@ -286,10 +309,23 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         }
     }
     
+    /**
+     * Computes and returns the index of the parent of the element at index
+     * <code>index</code>.
+     * 
+     * @param index the index whose parent index to compute.
+     * 
+     * @return the parent index. 
+     */
     private int getParentIndex(final int index) {
         return (index - 1) / d;
     }
     
+    /**
+     * Sifts a node up the heap until the minimum heap invariant satisfied.
+     * 
+     * @param index the index of a node to sift up. 
+     */
     private void siftUp(int index) {
         if (index == 0) {
             return;
@@ -320,6 +356,11 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
         target.index = index;
     }
     
+    /**
+     * Sifts a node down the heap until minimum heap invariant is satisfied.
+     * 
+     * @param index the index of the node to sift down.
+     */
     private void siftDown(int index) {
         final Node<T> target = (Node<T>) storage[index];
         final int PRIORITY = target.priority;
@@ -354,16 +395,5 @@ public class DAryHeap<T> implements IntegerPriorityQueue<T> {
             // Go for the next iteration.
             index = minChildIndex;
         }
-    }
-    
-    static void printarr(int... a) {
-        for (int i : a) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-    }
-    
-    public static void main(String... args) {
-        System.out.println((-1) / 3);
     }
 }

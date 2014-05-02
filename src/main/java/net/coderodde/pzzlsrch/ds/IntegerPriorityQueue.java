@@ -1,8 +1,10 @@
 package net.coderodde.pzzlsrch.ds;
 
 /**
- *
+ * This interface defines the API for integer priority queues.
+ * 
  * @param <T> the element type.
+ * 
  * @author Rodion Efremov
  * @version 1.0
  */
@@ -45,9 +47,22 @@ public interface IntegerPriorityQueue<T> {
      */
     public int size();
     
+    /**
+     * Clears this queue.
+     */
     public void clear();
     
+    /**
+     * Returns the minimum priority of this queue.
+     * 
+     * @return the minimum priority of this queue.
+     */
     public int getMinimumPriority();
     
+    /**
+     * Spawns an empty queue with the same implementation.
+     * 
+     * @return an empty queue.
+     */
     public IntegerPriorityQueue<T> newInstance();
 }

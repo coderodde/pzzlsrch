@@ -11,7 +11,6 @@ import net.coderodde.pzzlsrch.ds.support.DAryHeap;
 import net.coderodde.pzzlsrch.model.PuzzleNode;
 import net.coderodde.pzzlsrch.solvers.HeuristicFunction;
 import net.coderodde.pzzlsrch.solvers.Solver;
-import net.coderodde.pzzlsrch.solvers.support.BFSSolver;
 import net.coderodde.pzzlsrch.solvers.support.BidirectionalBFSSolver;
 import net.coderodde.pzzlsrch.solvers.support.BidirectionalHeuristicBFSSolver;
 import net.coderodde.pzzlsrch.solvers.support.DisplacementHeuristicFunction;
@@ -30,65 +29,15 @@ public class Demo {
         title1("Profiling puzzle solvers");
         final long SEED = 1398780721825L; //System.currentTimeMillis();
         final Random r = new Random(SEED);
-        final int STEPS = 90; //r.nextInt(50) + 1;
+        final int STEPS = 82; //r.nextInt(50) + 1;
         final PuzzleNode source = Utils.getRandomPuzzleNode(STEPS, 4, r);
         System.out.println("Seed: " + SEED);
         
         List<List<PuzzleNode>> pathList = new ArrayList<List<PuzzleNode>>();
         
-        Solver<PuzzleNode> solver = new BFSSolver<PuzzleNode>();
+        Solver<PuzzleNode> solver = new BidirectionalBFSSolver<PuzzleNode>();
         
-//        pathList.add(profile(source, solver));
-        
-//        solver = new BidirectionalBFSSolver<PuzzleNode>();
-//        
-//        pathList.add(profile(source, solver));
-//        
-//        HeuristicFunction<PuzzleNode> hf = 
-//                new DisplacementHeuristicFunction();
-//        
-//        solver = new HeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(hf)
-//                .withPriorityQueue(new DAryHeap(6));
-//        
-//        pathList.add(profileHeuristic(source, solver));
-//        
-//        hf = new ManhattanHeuristicFunction();
-//        
-//        solver = new HeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(hf)
-//                .withPriorityQueue(new DAryHeap(6));
-//        
-//        pathList.add(profileHeuristic(source, solver));
-//        
-//        hf = new ManhattanHeuristicFunction2(16);
-//        
-//        solver = new HeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(hf)
-//                .withPriorityQueue(new DAryHeap(6));
-//        
-//        pathList.add(profileHeuristic(source, solver));
-//        
-//        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(new DisplacementHeuristicFunction());
-//        
-//        pathList.add(profileHeuristic(source, solver));
-//        
-//        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(new DisplacementHeuristicFunction())
-//                .withPriorityQueue(new BucketHeap<PuzzleNode>(100));
-//        
-//        pathList.add(profileHeuristic(source, solver));
-//        
-//        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(new ManhattanHeuristicFunction());
-//        
-//        pathList.add(profileHeuristic(source, solver));
-//                
-//        solver = new BidirectionalHeuristicBFSSolver<PuzzleNode>()
-//                .withHeuristicFunction(new ManhattanHeuristicFunction2(16));
-//        
-//        pathList.add(profileHeuristic(source, solver));
+        pathList.add(profile(source, solver));
         
         final HeuristicFunction<PuzzleNode> dhf =
                 new DisplacementHeuristicFunction();
@@ -96,6 +45,8 @@ public class Demo {
         final HeuristicFunction<PuzzleNode> mhf =
                 new ManhattanHeuristicFunction();
         
+        final HeuristicFunction<PuzzleNode> mhf2 = 
+                new ManhattanHeuristicFunction2(100);
         
         profileHeuristicWithHeap(source,
                                  new HeuristicBFSSolver()
@@ -105,6 +56,11 @@ public class Demo {
         profileHeuristicWithHeap(source,
                                  new HeuristicBFSSolver()
                                         .withHeuristicFunction(mhf),
+                                 new BucketHeap<PuzzleNode>(100));
+        
+        profileHeuristicWithHeap(source,
+                                 new HeuristicBFSSolver()
+                                        .withHeuristicFunction(mhf2),
                                  new BucketHeap<PuzzleNode>(100));
         
         profileHeuristicWithHeap(source,
@@ -115,6 +71,41 @@ public class Demo {
         profileHeuristicWithHeap(source,
                                  new HeuristicBFSSolver()
                                         .withHeuristicFunction(mhf),
+                                 new DAryHeap<PuzzleNode>(6));
+        
+        profileHeuristicWithHeap(source,
+                                 new HeuristicBFSSolver()
+                                        .withHeuristicFunction(mhf2),
+                                 new DAryHeap<PuzzleNode>(6));
+        
+        profileHeuristicWithHeap(source,
+                                 new BidirectionalHeuristicBFSSolver()
+                                        .withHeuristicFunction(dhf),
+                                 new BucketHeap<PuzzleNode>(100));
+        
+        profileHeuristicWithHeap(source,
+                                 new BidirectionalHeuristicBFSSolver()
+                                        .withHeuristicFunction(mhf),
+                                 new BucketHeap<PuzzleNode>(100));
+        
+        profileHeuristicWithHeap(source,
+                                 new BidirectionalHeuristicBFSSolver()
+                                        .withHeuristicFunction(mhf2),
+                                 new BucketHeap<PuzzleNode>(100));
+        
+        profileHeuristicWithHeap(source,
+                                 new BidirectionalHeuristicBFSSolver()
+                                        .withHeuristicFunction(dhf),
+                                 new DAryHeap<PuzzleNode>(6));
+        
+        profileHeuristicWithHeap(source,
+                                 new BidirectionalHeuristicBFSSolver()
+                                        .withHeuristicFunction(mhf),
+                                 new DAryHeap<PuzzleNode>(6));
+        
+        profileHeuristicWithHeap(source,
+                                 new BidirectionalHeuristicBFSSolver()
+                                        .withHeuristicFunction(mhf2),
                                  new DAryHeap<PuzzleNode>(6));
     }
     
@@ -124,7 +115,8 @@ public class Demo {
              final IntegerPriorityQueue<PuzzleNode> queue) {
      
         title2("" + solver.getClass().getSimpleName() + " with " +
-               queue.getClass().getSimpleName());
+               queue.getClass().getSimpleName() + " using " +
+               solver.getHeuristicFunction().getClass().getSimpleName());
         
         solver.withPriorityQueue(queue.newInstance());
         
